@@ -67,6 +67,9 @@ let drawGame = function() {
     drawCircles();
     drawCrosses();
     drawCurrentCircle();
+    if(evaluateGameState() != GameState.InProgress) {
+        drawButton();
+    }
 }
 
 let mousedown = function(x, y) {
@@ -141,8 +144,7 @@ let drawCurrentCircle = function() {
 }
 
 let drawNewCross = function() {
-    let isSpaceAvailable = circles.length + crosses.length < 9;
-    if(isSpaceAvailable && evaluateGameState() == GameState.InProgress) {
+    if(evaluateGameState() == GameState.InProgress) {
         let isTaken = true;
         let randomX = 0;
         let randomY = 0;
@@ -166,8 +168,18 @@ let drawNewCross = function() {
     }
 }
 
+let drawButton = function() {
+    ctx.fillStyle = "#ff3377";
+    ctx.rect(width/6, 2*height/6, 4*width/6, 2*height/6);
+    ctx.fill();
+
+    ctx.font = "30px Arial";
+    ctx.strokeText("Hello World",width/6 + 20, 3*height/6 - 20);
+}
+
 let evaluateGameState = function() {
-    let isWon = false;
+    let isWon = false;    
+    let isSpaceAvailable = circles.length + crosses.length < 9;
     let grid = [[0,0,0],
                 [0,0,0],
                 [0,0,0]];
@@ -199,5 +211,14 @@ let evaluateGameState = function() {
         || grid[2][0] == grid[1][1] && grid[2][0] == grid[0][2] && grid[2][0] != GameState.InProgress) {
         winner = grid[1][1];
     }
+
+    if(winner == GameState.InProgress && !isSpaceAvailable) winner = GameState.Tie;
     return winner;
+}
+
+
+
+let restartGame = function() {
+    circles = [];
+    crosses = [];
 }
