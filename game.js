@@ -80,28 +80,34 @@ let mousedown = function(x, y) {
         upY = y;
         isMouseDown = true;
     }
+    else {
+        restartGame();
+        isMouseDown = false;
+    }
 }
 
 let mouseup = function(x, y) {
-    upX = x;
-    upY = y;
-    isMouseDown = false;
-    let radius = Math.sqrt(Math.pow(Math.abs(upX - downX), 2) + Math.pow(Math.abs(upY - downY), 2));
-    let thisCircle = new Circle(downX, downY, radius);
-    let isTaken = false;    
-    circles.forEach(function(element) {
-        if(element.gridX == thisCircle.gridX && element.gridY == thisCircle.gridY) {
-            isTaken = true;
+    if(isMouseDown) {
+        upX = x;
+        upY = y;
+        isMouseDown = false;
+        let radius = Math.sqrt(Math.pow(Math.abs(upX - downX), 2) + Math.pow(Math.abs(upY - downY), 2));
+        let thisCircle = new Circle(downX, downY, radius);
+        let isTaken = false;    
+        circles.forEach(function(element) {
+            if(element.gridX == thisCircle.gridX && element.gridY == thisCircle.gridY) {
+                isTaken = true;
+            }
+        });    
+        crosses.forEach(function(element) {
+            if(element.gridX == thisCircle.gridX && element.gridY == thisCircle.gridY) {
+                isTaken = true;
+            }
+        });
+        if(!isTaken) {
+            circles.push(thisCircle);
+            drawNewCross();
         }
-    });    
-    crosses.forEach(function(element) {
-        if(element.gridX == thisCircle.gridX && element.gridY == thisCircle.gridY) {
-            isTaken = true;
-        }
-    });
-    if(!isTaken) {
-        circles.push(thisCircle);
-        drawNewCross();
     }
 }
 
@@ -173,8 +179,13 @@ let drawButton = function() {
     ctx.rect(width/6, 2*height/6, 4*width/6, 2*height/6);
     ctx.fill();
 
-    ctx.font = "30px Arial";
-    ctx.strokeText("Hello World",width/6 + 20, 3*height/6 - 20);
+    ctx.font="20px Georgia";
+    ctx.fillStyle = "#000000";
+    let message = "";
+    if(evaluateGameState() == GameState.Player) message = "You won! Click to restart.";
+    else if(evaluateGameState() == GameState.AI) message = "You lost... Click to restart.";
+    else if(evaluateGameState() == GameState.Tie) message = "It's a tie. Click to restart.";
+    ctx.fillText(message, width/6 + 30, 3*height/6 + 5);
 }
 
 let evaluateGameState = function() {
