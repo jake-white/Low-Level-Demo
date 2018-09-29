@@ -175,7 +175,7 @@ let drawNewCross = function() {
 }
 
 let drawButton = function() {
-    ctx.fillStyle = "#ff3377";
+    ctx.fillStyle = "rgba(255, 50, 150, 0.9)";
     ctx.rect(width/6, 2*height/6, 4*width/6, 2*height/6);
     ctx.fill();
 
